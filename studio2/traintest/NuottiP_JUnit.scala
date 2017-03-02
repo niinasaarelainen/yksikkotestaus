@@ -15,14 +15,17 @@ class NuottiPTest extends FlatSpec with Matchers {
   
  // #1 
 "NuottiPiirturi" should "find non-valid note names (not investigating length)" in {
-     val nuottejaVaarin = Buffer("t1-", "d3-", "f",  "p", "1c", "2f", "f2f2", "f2f", "f2f----", "hb22----", "c11", "d#b", "hb#", 
-         "ddd", "d1d", "ab2", "a#2----", "hb2", "a2", "#c" )  // ,  "h2"
-     val taukojaVaarin= Buffer("za", "z#--", "zz", "zz-top", "tauko", " z")     
-    
+     
      val nuottejaOikein = Buffer("d1#.----", "e1----.#", "c1-.", "g1-", "H#2", "Gb1----", "Ab1--",  "f#1---", "d2b", "a-----1#",
-         "--c1", "----g2")  // 
+         "--c1", "----g2", "ab2", "a#2----")  // 
+  
+     val nuottejaVaarin = Buffer("t1-", "d3-", "f",  "p", "1c", "2f", "f2f2", "f2f", "f2f----", "hb22----", "c11", "d#b", "hb#", 
+         "ddd", "d1d",  "hb2", "h2", "#c" ) 
+     
      val taukojaOikein= Buffer("z", "z--", "z----", "z.", "-z", "z--.", "--.z")   
      
+     val taukojaVaarin= Buffer("za", "z#--", "zz", "zz-top", "tauko", " z")     
+    
    
      var virheitaHylattavillaNuoteilla, virheitaHyvaksyttavillaNuoteilla, virheitaHylattavillaTauoilla, virheitaHyvaksyttavillaTauoilla = 0
     
@@ -50,8 +53,6 @@ class NuottiPTest extends FlatSpec with Matchers {
                virheita += 1  
             else if(filtteredNote.tail.contains("#b") ||  filtteredNote.tail.contains("#b"))    
                virheita += 1 
-            else if  (filtteredNote.contains("a") &&  filtteredNote.contains("2"))  // löytää a2, a#2, ab2 = piirtoalueen ulkopuolella    
-               virheita += 1      
             else if(filtteredNote.contains("h") &&   filtteredNote.contains("2"))  // löytää h2, h#2, hb2 = piirtoalueen ulkopuolella    
                virheita += 1               
             else if(filtteredNote.size == 3){   // tämä testi vikana !!!
