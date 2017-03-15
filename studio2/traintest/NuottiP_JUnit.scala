@@ -6,6 +6,12 @@ import org.scalatest.junit.JUnitRunner
 import org.scalatest.FlatSpec
 import org.scalatest.Matchers
 import org.scalatest.Assertions._
+
+import scala.io.Source
+import scala.collection.mutable.Buffer
+import scala.io.StdIn._
+import java.io._
+
 import studio2.train._
 
 
@@ -29,37 +35,38 @@ class NuottiPTest extends FlatSpec with Matchers {
    
      var virheitaHylattavillaNuoteilla, virheitaHyvaksyttavillaNuoteilla, virheitaHylattavillaTauoilla, virheitaHyvaksyttavillaTauoilla = 0
     
-     virheitaHylattavillaNuoteilla = laskeVirheet( nuottejaVaarin)
-     virheitaHyvaksyttavillaNuoteilla =  laskeVirheet( nuottejaOikein)
-     virheitaHylattavillaTauoilla = laskeVirheet( taukojaVaarin)
-     virheitaHyvaksyttavillaTauoilla = laskeVirheet( taukojaOikein)
+     virheitaHylattavillaNuoteilla     = laskeVirheet(nuottejaVaarin)
+     virheitaHyvaksyttavillaNuoteilla  = laskeVirheet(nuottejaOikein)
+     virheitaHylattavillaTauoilla      = laskeVirheet(taukojaVaarin)
+     virheitaHyvaksyttavillaTauoilla   = laskeVirheet(taukojaOikein)
      
-   def laskeVirheet(syotteet: Buffer[String]) = {   
-      var virheita = 0 
-      for (syote <- syotteet) {
-       
-         val filtteredNote = syote.filter(_ != '-').filter(_ != '.')
+     
+     def laskeVirheet(syotteet: Buffer[String]) = {   
+        var virheita = 0 
+        for (syote <- syotteet) {
          
-         if(filtteredNote == "z")
-            {}
-         else{
-            if(!"cdefgahb".contains(filtteredNote.toLowerCase().head.toString()))
-               virheita += 1
-            else if(!(filtteredNote.tail.contains("1")|| filtteredNote.tail.contains("2")))   
-               virheita += 1  
-            else if(filtteredNote.size < 2)
-               virheita += 1
-            else if(filtteredNote.size > 3)
-               virheita += 1  
-            else if(filtteredNote.tail.contains("#b") ||  filtteredNote.tail.contains("b#"))    
-               virheita += 1 
-            else if(filtteredNote.size == 3 && !(filtteredNote.tail.contains("#") || filtteredNote.tail.contains("b")))   
-                     virheita += 1  
-               
-          } // iso else
-      }  // for
-      
-      virheita
+           val filtteredNote = syote.filter(_ != '-').filter(_ != '.')
+           
+           if(filtteredNote == "z")
+              {}
+           else{
+              if(!"cdefgahb".contains(filtteredNote.toLowerCase().head.toString()))
+                 virheita += 1
+              else if(!(filtteredNote.tail.contains("1")|| filtteredNote.tail.contains("2")))   
+                 virheita += 1  
+              else if(filtteredNote.size < 2)
+                 virheita += 1
+              else if(filtteredNote.size > 3)
+                 virheita += 1  
+              else if(filtteredNote.tail.contains("#b") ||  filtteredNote.tail.contains("b#"))    
+                 virheita += 1 
+              else if(filtteredNote.size == 3 && !(filtteredNote.tail.contains("#") || filtteredNote.tail.contains("b")))   
+                       virheita += 1  
+                 
+            } // iso else
+        }  // for
+        
+        virheita
 }     
       assert(virheitaHyvaksyttavillaNuoteilla == 0  &&  virheitaHylattavillaNuoteilla == nuottejaVaarin.size && 
           virheitaHyvaksyttavillaTauoilla == 0 &&  virheitaHylattavillaTauoilla == taukojaVaarin.size)  
@@ -77,22 +84,22 @@ class NuottiPTest extends FlatSpec with Matchers {
      virheitaHyvaksyttavillaPituuksilla =  laskeVirheet( pituuksiaOikein)
     
      
-   def laskeVirheet(syotteet: Buffer[String] ) = {
-     var virheita = 0 
-     for (syote <- syotteet) {
-        val lkm = syote.count(_ == '-')
-        println(lkm)
-        if(lkm > 4)
-            virheita += 1
-        else if(lkm == 3 && syote.contains("."))    // ohjelmassa ei määritelty pisteellistä pisteellistä puolinuottia
-          virheita += 1   
-        else if(lkm == 4 && syote.contains("."))   // max pituus 4
-          virheita += 1  
-        else if(lkm == 0 && syote.contains("."))    // ei pisteellistä kahdeksasosaa
-          virheita += 1     
-     }     
-    
-     virheita
+     def laskeVirheet(syotteet: Buffer[String] ) = {
+       var virheita = 0 
+       for (syote <- syotteet) {
+          val lkm = syote.count(_ == '-')
+          println(lkm)
+          if(lkm > 4)
+              virheita += 1
+          else if(lkm == 3 && syote.contains("."))    // ohjelmassa ei määritelty pisteellistä pisteellistä puolinuottia
+            virheita += 1   
+          else if(lkm == 4 && syote.contains("."))   // max pituus 4
+            virheita += 1  
+          else if(lkm == 0 && syote.contains("."))    // ei pisteellistä kahdeksasosaa
+            virheita += 1     
+       }     
+      
+       virheita
    }  
     
       assert(virheitaHyvaksyttavillaPituuksilla == 0  &&  virheitaHylattavillaPituuksilla == pituuksiaVaarin.size )   
@@ -105,7 +112,7 @@ class NuottiPTest extends FlatSpec with Matchers {
 }
 
 // #   
-"NuottiPiirturi" should "draw eight note couple right" in {
+"NuottiPiirturi" should "draw eight note couple stems up" in {
   
  //  assert()
 }
@@ -118,8 +125,30 @@ class NuottiPTest extends FlatSpec with Matchers {
 
 // #
 "NuottiPiirturi" should "exit with empty file and with empty note data" in {
-  
- //  assert()
+    val luk = new TiedostonLukeminen
+    luk.lueTiedosto()
+    var inputFromFile = Buffer[String]()  
+    val tdsto = Source.fromFile("tyhja")
+    
+    try {
+       for (rivi <- tdsto.getLines) {
+          inputFromFile += rivi.trim
+       }
+     } finally {
+        tdsto.close()
+     }
+          
+     if (inputFromFile.size != 0){
+         luk.kasitteleTunnisteet(inputFromFile) 
+         if(luk.nuottiDataRiveina.size ==0) {println("\n\nei nuottidataa, ei tehdä mitään."); System.exit(1)}
+         else if(luk.ekaKerta) luk.tarkistaVirheet()     // loput virheidentarkistukset do while-loopissa, kutsu rivillä 94
+     }
+     else {
+       println("\n\ntyhjästä tiedostosta ei voi tehdä nuotteja")
+       System.exit(1)
+     }
+    
+   //  assert()
 }
 
 }
